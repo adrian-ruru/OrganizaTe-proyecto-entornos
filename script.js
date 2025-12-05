@@ -262,14 +262,7 @@ function drop(e) {
     draggedTask = null;
 }
 
-// Prevenir que se quite el drag-over al salir
-document.querySelectorAll('.tasks-container').forEach(container => {
-    container.addEventListener('dragleave', (e) => {
-        if (e.target === container) {
-            container.classList.remove('drag-over');
-        }
-    });
-});
+
 
 // Funciones de localStorage
 function saveTasksToStorage() {
@@ -317,7 +310,18 @@ document.addEventListener('keydown', (e) => {
     if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
         const modal = document.getElementById('taskModal');
         if (modal.style.display === 'block') {
-            document.getElementById('taskForm').dispatchEvent(new Event('submit'));
+            const form = document.getElementById('taskForm');
+            // Usar requestSubmit si está disponible, o submit como fallback
+            if (form.requestSubmit) {
+                form.requestSubmit();
+            } else {
+                // Fallback para navegadores antiguos
+                if (form.checkValidity()) {
+                    form.dispatchEvent(new Event('submit'));
+                } else {
+                    form.reportValidity();
+                }
+            }
         }
     }
 });
