@@ -1,0 +1,126 @@
+:root {
+    --verde-oscuro: #1e4034;
+    --naranja-acento: #e68a49;
+    --naranja-hover: #cf7538;
+    --fondo-crema: #f1f6f1;
+    --blanco-tarjeta: #ffffff;
+    --borde-suave: #e0e6e0;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--fondo-crema);
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden; 
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 15vh; /* Al ser menos campos, lo bajamos un poco más */
+}
+
+.container {
+    background-color: var(--blanco-tarjeta);
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+    width: 100%;
+    max-width: 350px;
+}
+
+h2 {
+    color: var(--verde-oscuro);
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+label {
+    display: block;
+    margin-bottom: 0.3rem;
+    font-weight: 600;
+    font-size: 0.8rem;
+    color: var(--verde-oscuro);
+}
+
+input {
+    width: 100%;
+    padding: 0.7rem;
+    border: 1px solid var(--borde-suave);
+    border-radius: 6px;
+    box-sizing: border-box;
+    background-color: #fafafa;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+}
+
+input:focus {
+    outline: none;
+    border-color: var(--naranja-acento);
+    background-color: #fff;
+}
+
+button {
+    width: 100%;
+    padding: 0.8rem;
+    background-color: var(--naranja-acento);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 0.5rem;
+    transition: all 0.2s ease;
+}
+
+button:hover {
+    background-color: var(--naranja-hover);
+    transform: translateY(-1px);
+}
+
+button:active {
+    transform: scale(0.98);
+}
+
+.extra-links {
+    text-align: center;
+    margin-top: 1rem;
+}
+
+.forgot-password {
+    font-size: 0.75rem;
+    color: #888;
+    text-decoration: none;
+}
+
+.forgot-password:hover {
+    color: var(--verde-oscuro);
+    text-decoration: underline;
+}
+
+.footer-text {
+    text-align: center;
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid #f0f0f0;
+    font-size: 0.8rem;
+    color: #666;
+}
+
+.footer-text a {
+    color: var(--naranja-acento);
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.footer-text a:hover {
+    text-decoration: underline;
+}
