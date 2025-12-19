@@ -1,76 +1,109 @@
-/* Estilos básicos para centrar el formulario */
+:root {
+    --verde-oscuro: #1e4034;
+    --naranja-acento: #e68a49;
+    --naranja-hover: #cf7538;
+    --fondo-crema: #f1f6f1;
+    --blanco-tarjeta: #ffffff;
+    --texto-oscuro: #333333;
+    --borde-suave: #e0e6e0;
+}
+
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f0f2f5;
+    background-color: var(--fondo-crema);
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden; 
     display: flex;
     justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
+    align-items: flex-start;
+    padding-top: 8vh; 
 }
 
 .container {
-    background-color: #ffffff;
-    padding: 2rem;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    background-color: var(--blanco-tarjeta);
+    padding: 1.5rem 2rem; 
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
     width: 100%;
-    max-width: 400px;
+    max-width: 350px; 
 }
 
 h2 {
+    color: var(--verde-oscuro);
     text-align: center;
-    color: #333;
-    margin-bottom: 1.5rem;
+    margin-top: 0;
+    margin-bottom: 1rem; 
+    font-size: 1.5rem;
 }
 
 .form-group {
-    margin-bottom: 1rem;
+    margin-bottom: 0.7rem; 
 }
 
 label {
     display: block;
-    margin-bottom: 0.5rem;
-    color: #666;
+    margin-bottom: 0.4rem; 
+    margin-top: 1.3rem;
+    font-weight: 600;
+    font-size: 0.8rem; 
+    color: var(--verde-oscuro);
 }
 
 input {
     width: 100%;
-    padding: 0.75rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    box-sizing: border-box; /* Asegura que el padding no afecte el ancho */
+    padding: 0.8rem; 
+    border: 1px solid var(--borde-suave);
+    border-radius: 6px;
+    box-sizing: border-box;
+    background-color: #fafafa;
+    font-size: 0.85rem;
+    transition: all 0.2s ease;
 }
 
 input:focus {
     outline: none;
-    border-color: #007bff;
+    border-color: var(--naranja-acento);
+    background-color: #fff;
 }
 
 button {
     width: 100%;
-    padding: 0.75rem;
-    background-color: #007bff;
+    padding: 0.7rem;
+    background-color: var(--naranja-acento);
     color: white;
     border: none;
-    border-radius: 4px;
-    font-size: 1rem;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    font-weight: bold;
     cursor: pointer;
-    transition: background-color 0.3s;
+    margin-top: 1rem;
+    transition: background-color 0.2s ease, transform 0.1s ease;
 }
 
 button:hover {
-    background-color: #0056b3;
+    background-color: var(--naranja-hover);
+}
+
+button:active {
+    transform: scale(0.98);
 }
 
 .footer-text {
     text-align: center;
     margin-top: 1rem;
-    font-size: 0.9rem;
+    font-size: 0.75rem;
     color: #777;
 }
 
 .footer-text a {
-    color: #007bff;
+    color: var(--naranja-acento);
     text-decoration: none;
+    font-weight: bold;
+}
+
+.footer-text a:hover {
+    text-decoration: underline;
 }
