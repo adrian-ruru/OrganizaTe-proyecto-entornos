@@ -21,6 +21,10 @@ body {
     padding-top: 8vh; 
 }
 
+body, html {
+    overflow-x: hidden;
+}
+
 .logo-container {
     text-align: center; 
     margin-bottom: 20px; 
