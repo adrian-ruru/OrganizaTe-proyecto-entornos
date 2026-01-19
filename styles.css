@@ -436,3 +436,65 @@ header p {
 .tasks-container::-webkit-scrollbar-thumb:hover {
     background: #357abd;
 }
+
+
+
+
+
+
+
+
+/* Estilo para el botón de navegación en el header */
+.back-link {
+    color: #ffffff !important; /* Blanco puro */
+    text-decoration: none;
+    background-color: rgba(255, 255, 255, 0.15); /* Fondo blanco semi-transparente */
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.4); /* Borde sutil para dar relieve */
+}
+
+.back-link:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Asegurar que el contenedor del header distribuya el espacio */
+header .header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Ajustes para el Header con Navegación */
+.header-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 1rem;
+}
+
+.nav-btn {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white;
+    text-decoration: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: background 0.3s;
+}
+
+.nav-btn:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+}

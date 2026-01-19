@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OrganizaTe - Contactos</title>
+    <link rel="stylesheet" href="../styles.css"> 
+    <link rel="stylesheet" href="contacts.css">
+</head>
+<body>
+    <header>
+        <div class="header-content" style="display: flex; justify-content: space-between; align-items: center; max-width: 1400px; margin: 0 auto; padding: 0 1rem;">
+            <div>
+                <h1>OrganizaTe</h1>
+                <p>Gestión de Contactos</p>
+            </div>
+            <a href="../index.html" class="back-link">📋 Volver a Tareas</a>
+        </div>
+    </header>
+
+    <main class="contacts-container">
+        <button class="add-task-btn" onclick="openContactModal()" style="width: auto; padding: 0.8rem 2rem;">
+            + Agregar Nuevo Contacto
+        </button>
+
+        <div class="contacts-grid" id="contactsContainer">
+            </div>
+    </main>
+
+    <div id="contactModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeContactModal()">&times;</span>
+            <h2>Nuevo Contacto</h2>
+            <form id="contactForm">
+                <div class="form-group">
+                    <label>Nombre Completo:</label>
+                    <input type="text" id="contactName" required>
+                </div>
+                <div class="form-group">
+                    <label>Email:</label>
+                    <input type="email" id="contactEmail" required>
+                </div>
+                <div class="form-group">
+                    <label>Teléfono:</label>
+                    <input type="tel" id="contactPhone">
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary">Guardar</button>
+                    <button type="button" class="btn-secondary" onclick="closeContactModal()">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="contacts.js"></script>
+</body>
+</html>

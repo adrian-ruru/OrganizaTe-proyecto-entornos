@@ -1,0 +1,94 @@
+/* Importar variables y estilos base para mantener la relación visual */
+:root {
+    --primary-color: #4a90e2;
+    --secondary-color: #2c3e50;
+    --success-color: #27ae60;
+    --warning-color: #f39c12;
+    --danger-color: #e74c3c;
+    --background-color: #f5f7fa;
+    --card-background: #ffffff;
+    --border-color: #e0e6ed;
+    --text-color: #2c3e50;
+    --text-light: #7f8c8d;
+    --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    --shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Layout específico de Contactos */
+.contacts-section {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1.5rem;
+}
+
+.contacts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+/* Tarjeta de Contacto (Relacionada con .task-card del CSS original) */
+.contact-card {
+    background-color: var(--card-background);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow);
+    position: relative;
+    border-top: 4px solid var(--primary-color);
+}
+
+.contact-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-hover);
+}
+
+.contact-info h3 {
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+    color: var(--secondary-color);
+}
+
+.contact-detail {
+    color: var(--text-light);
+    font-size: 0.95rem;
+    margin-bottom: 0.4rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.contact-actions {
+    margin-top: 1.5rem;
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-end;
+}
+
+/* Estilos de navegación para el Header */
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+.back-link {
+    color: white;
+    text-decoration: none;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-weight: 600;
+    transition: background 0.3s;
+}
+
+.back-link:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
