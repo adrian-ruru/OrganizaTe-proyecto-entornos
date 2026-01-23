@@ -1,0 +1,245 @@
+DROP DATABASE IF EXISTS organizate;
+CREATE DATABASE organizate
+  DEFAULT CHARACTER SET utf8mb4
+  DEFAULT COLLATE utf8mb4_0900_ai_ci;
+
+USE organizate;
+
+CREATE TABLE persona (
+  id            BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  nombre        VARCHAR(120)    NOT NULL,
+  email         VARCHAR(190)    NULL,
+  telefono      VARCHAR(30)     NULL,
+  notas         TEXT            NULL,
+
+  -- Solo se usa si esa persona puede iniciar sesión
+  password_hash VARCHAR(255)    NULL,
+
+  created_at    DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at    DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+  PRIMARY KEY (id),
+  UNIQUE KEY uq_persona_email (email)
+) ENGINE=InnoDB;
+
+
+CREATE TABLE usuario (
+  persona_id BIGINT UNSIGNED NOT NULL,
+  -- campos propios de usuario (si queréis) -> ejemplo:
+  estado     ENUM('ACTIVO','INACTIVO') NOT NULL DEFAULT 'ACTIVO',
+
+  PRIMARY KEY (persona_id),
+  CONSTRAINT fk_usuario_persona
+    FOREIGN KEY (persona_id) REFERENCES persona(id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE administrador (
+  persona_id BIGINT UNSIGNED NOT NULL,
+  -- campos propios de admin (si queréis)
+  nivel      ENUM('ADMIN','SUPERADMIN') NOT NULL DEFAULT 'ADMIN',
+
+  PRIMARY KEY (persona_id),
+  CONSTRAINT fk_admin_persona
+    FOREIGN KEY (persona_id) REFERENCES persona(id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+-- =========================================================
+-- AGENDA / CONTACTOS: ya NO hay tabla contacto
+-- Un usuario (persona_id) guarda en su agenda a muchas personas (contactos)
+-- =========================================================
+CREATE TABLE agenda_contacto (
+  usuario_id   BIGINT UNSIGNED NOT NULL,  -- persona_id del usuario
+  contacto_id  BIGINT UNSIGNED NOT NULL,  -- persona_id del contacto
+  created_at   DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+  PRIMARY KEY (usuario_id, contacto_id),
+
+  CONSTRAINT fk_agenda_usuario
+    FOREIGN KEY (usuario_id) REFERENCES usuario(persona_id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+
+  CONSTRAINT fk_agenda_contacto
+    FOREIGN KEY (contacto_id) REFERENCES persona(id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+CREATE INDEX idx_agenda_contacto ON agenda_contacto(contacto_id);
+
+-- =========================================================
+-- ETIQUETAS (las define un usuario)
+-- =========================================================
+CREATE TABLE etiqueta (
+  id            BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  usuario_id    BIGINT UNSIGNED NOT NULL, -- persona_id del usuario
+  nombre        VARCHAR(60)     NOT NULL,
+  color         VARCHAR(20)     NULL,
+
+  created_at    DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at    DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+  PRIMARY KEY (id),
+  KEY idx_etiqueta_usuario (usuario_id),
+  UNIQUE KEY uq_etiqueta_usuario_nombre (usuario_id, nombre),
+
+  CONSTRAINT fk_etiqueta_usuario
+    FOREIGN KEY (usuario_id) REFERENCES usuario(persona_id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+-- =========================================================
+-- TAREAS (pertenecen a un usuario)
+-- contacto_id ahora es persona_id (un contacto de la agenda)
+-- =========================================================
+CREATE TABLE tarea (
+  id               BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  usuario_id       BIGINT UNSIGNED NOT NULL,      -- persona_id del usuario
+  persona_contacto_id BIGINT UNSIGNED NULL,       -- persona vinculada (contacto)
+
+  titulo           VARCHAR(150)    NOT NULL,
+  descripcion      TEXT            NULL,
+  fecha_hora       DATETIME        NULL,
+  prioridad        ENUM('BAJA','MEDIA','ALTA') NOT NULL DEFAULT 'MEDIA',
+  estado           ENUM('PENDIENTE','EN_CURSO','FINALIZADA','ARCHIVADA') NOT NULL DEFAULT 'PENDIENTE',
+  cerrada_en       DATETIME        NULL,
+
+  created_at       DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at       DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+  PRIMARY KEY (id),
+  KEY idx_tarea_usuario (usuario_id),
+  KEY idx_tarea_estado (estado),
+  KEY idx_tarea_fecha (fecha_hora),
+  KEY idx_tarea_contacto (persona_contacto_id),
+
+  CONSTRAINT fk_tarea_usuario
+    FOREIGN KEY (usuario_id) REFERENCES usuario(persona_id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+
+  -- Si borras una persona-contacto, se desvincula de la tarea
+  CONSTRAINT fk_tarea_persona_contacto
+    FOREIGN KEY (persona_contacto_id) REFERENCES persona(id)
+    ON DELETE SET NULL
+    ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE tarea_etiqueta (
+  tarea_id     BIGINT UNSIGNED NOT NULL,
+  etiqueta_id  BIGINT UNSIGNED NOT NULL,
+
+  PRIMARY KEY (tarea_id, etiqueta_id),
+  KEY idx_te_etiqueta (etiqueta_id),
+
+  CONSTRAINT fk_te_tarea
+    FOREIGN KEY (tarea_id) REFERENCES tarea(id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+
+  CONSTRAINT fk_te_etiqueta
+    FOREIGN KEY (etiqueta_id) REFERENCES etiqueta(id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE subtarea (
+  id            BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  tarea_id      BIGINT UNSIGNED NOT NULL,
+  descripcion   VARCHAR(255)    NOT NULL,
+  completada    BOOLEAN         NOT NULL DEFAULT FALSE,
+
+  created_at    DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at    DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+  PRIMARY KEY (id),
+  KEY idx_subtarea_tarea (tarea_id),
+
+  CONSTRAINT fk_subtarea_tarea
+    FOREIGN KEY (tarea_id) REFERENCES tarea(id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE recordatorio (
+  id               BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  tarea_id          BIGINT UNSIGNED NOT NULL,
+  persona_contacto_id BIGINT UNSIGNED NULL,
+
+  titulo            VARCHAR(150)    NOT NULL,
+  definicion        VARCHAR(255)    NULL,
+
+  tipo              ENUM('ABSOLUTO','RELATIVO') NOT NULL DEFAULT 'ABSOLUTO',
+  minutos_relativos INT            NULL,
+  fecha_hora        DATETIME       NULL,
+
+  created_at        DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at        DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+  PRIMARY KEY (id),
+  KEY idx_recordatorio_tarea (tarea_id),
+  KEY idx_recordatorio_contacto (persona_contacto_id),
+  KEY idx_recordatorio_fecha (fecha_hora),
+
+  CONSTRAINT fk_recordatorio_tarea
+    FOREIGN KEY (tarea_id) REFERENCES tarea(id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+
+  CONSTRAINT fk_recordatorio_persona_contacto
+    FOREIGN KEY (persona_contacto_id) REFERENCES persona(id)
+    ON DELETE SET NULL
+    ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE historico_actividad (
+  id           BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  usuario_id   BIGINT UNSIGNED NOT NULL, -- persona_id del usuario
+  tarea_id     BIGINT UNSIGNED NULL,
+  accion       VARCHAR(120)    NOT NULL,
+  descripcion  VARCHAR(255)    NULL,
+  fecha        DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+  PRIMARY KEY (id),
+  KEY idx_hist_usuario (usuario_id),
+  KEY idx_hist_tarea (tarea_id),
+
+  CONSTRAINT fk_hist_usuario
+    FOREIGN KEY (usuario_id) REFERENCES usuario(persona_id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+
+  CONSTRAINT fk_hist_tarea
+    FOREIGN KEY (tarea_id) REFERENCES tarea(id)
+    ON DELETE SET NULL
+    ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+-- =========================================================
+-- REGLA: máximo 10 recordatorios por tarea
+-- MySQL no lo puede "forzar" con un CHECK simple, así que:
+-- (Opcional) trigger de validación.
+-- =========================================================
+DELIMITER $$
+
+CREATE TRIGGER trg_recordatorio_max10_before_insert
+BEFORE INSERT ON recordatorio
+FOR EACH ROW
+BEGIN
+  DECLARE cnt INT;
+  SELECT COUNT(*) INTO cnt
+  FROM recordatorio
+  WHERE tarea_id = NEW.tarea_id;
+
+  IF cnt >= 10 THEN
+    SIGNAL SQLSTATE '45000'
+      SET MESSAGE_TEXT = 'Una tarea no puede tener más de 10 recordatorios.';
+  END IF;
+END$$
+
+DELIMITER ;
