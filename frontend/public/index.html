@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OrganizaTé | Organiza tu equipo</title>
+  <link rel="stylesheet" href="../assets/css/variables.css" />
+  <link rel="stylesheet" href="../assets/css/main.css" />
+</head>
+<body class="page" data-page="home">
+  <header class="topbar">
+    <div class="container topbar-content">
+      <a class="brand" href="../views/login.html">Organiza<span>Té</span></a>
+      <nav class="nav-links" data-nav>
+        <a href="../views/dashboard.html" data-page-link="dashboard">Dashboard</a>
+        <a href="../views/tasks.html" data-page-link="tasks">Tareas</a>
+        <a href="../views/reminders.html" data-page-link="reminders">Recordatorios</a>
+        <a href="../views/contacts.html" data-page-link="contacts">Contactos</a>
+      </nav>
+      <button class="nav-toggle" data-nav-toggle aria-label="Abrir menú">☰</button>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <div class="container">
+      <section class="hero">
+        <div>
+          <h1>OrganizaTé: tus tareas y pizarras en un mismo lugar</h1>
+          <p>Combina el flujo Kanban de Trello/Jira con pizarras colaborativas tipo Miro. Todo listo para que tu equipo trabaje en tiempo real.</p>
+          <div class="task-actions" style="margin-top: 16px;">
+            <a class="btn btn-primary" href="../views/login.html">Comenzar</a>
+            <a class="btn btn-secondary" href="../views/tasks.html">Ver tablero</a>
+          </div>
+        </div>
+        <div class="card">
+          <h3>¿Qué puedes hacer?</h3>
+          <ul class="list" style="margin-top: 12px;">
+            <li class="list-item">Crear tareas con prioridades y estados.</li>
+            <li class="list-item">Abrir pizarras colaborativas con post-its, texto e imágenes.</li>
+            <li class="list-item">Programar recordatorios y mantener al equipo alineado.</li>
+          </ul>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script src="../assets/js/main.js" type="module"></script>
+</body>
+</html>

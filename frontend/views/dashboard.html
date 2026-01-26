@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OrganizaTé | Dashboard</title>
+  <link rel="stylesheet" href="../assets/css/variables.css" />
+  <link rel="stylesheet" href="../assets/css/main.css" />
+</head>
+<body class="page" data-page="dashboard">
+  <header class="topbar">
+    <div class="container topbar-content">
+      <a class="brand" href="dashboard.html">Organiza<span>Té</span></a>
+      <nav class="nav-links" data-nav>
+        <a href="dashboard.html" data-page-link="dashboard">Dashboard</a>
+        <a href="tasks.html" data-page-link="tasks">Tareas</a>
+        <a href="reminders.html" data-page-link="reminders">Recordatorios</a>
+        <a href="contacts.html" data-page-link="contacts">Contactos</a>
+      </nav>
+      <button class="nav-toggle" data-nav-toggle aria-label="Abrir menú">☰</button>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <div class="container">
+      <section class="hero">
+        <div>
+          <h1>Hola, <span data-user-name>equipo</span> 👋</h1>
+          <p>Tu espacio <strong data-workspace-name>Equipo central</strong> está listo para organizar tareas y colaborar en pizarras visuales.</p>
+          <div class="task-actions" style="margin-top: 16px;">
+            <a class="btn btn-primary" href="tasks.html">Ir al tablero Kanban</a>
+            <a class="btn btn-secondary" href="reminders.html">Ver recordatorios</a>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Resumen rápido</h3>
+          <div class="list" style="margin-top: 12px;">
+            <div class="list-item">
+              <strong>Tareas activas</strong>
+              <span data-task-count>0</span>
+            </div>
+            <div class="list-item">
+              <strong>Recordatorios programados</strong>
+              <span data-reminder-count>0</span>
+            </div>
+            <div class="list-item">
+              <strong>Pizarras colaborativas</strong>
+              <span>Sincronizadas en tiempo real (demo)</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section style="margin-top: 32px;">
+        <h2 class="section-title">Flujo recomendado</h2>
+        <div class="card-grid">
+          <article class="card">
+            <h3>Crea tareas</h3>
+            <p>Define objetivos y prioriza con etiquetas de color para mantener el foco del equipo.</p>
+          </article>
+          <article class="card">
+            <h3>Comparte pizarras</h3>
+            <p>Cada tarea abre una pizarra visual con post-its, texto e imágenes.</p>
+          </article>
+          <article class="card">
+            <h3>Sincroniza recordatorios</h3>
+            <p>Programa fechas clave y mantén a todos alineados con alertas.</p>
+          </article>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="footer">
+    OrganizaTé · Gestión de tareas visual y colaborativa.
+  </footer>
+
+  <script src="../assets/js/main.js" type="module"></script>
+  <script src="../assets/js/dashboard.js" type="module"></script>
+</body>
+</html>
