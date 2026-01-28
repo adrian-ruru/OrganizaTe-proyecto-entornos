@@ -1,3 +1,5 @@
+BigInt.prototype.toJSON = function() { return this.toString() };
+
 const express = require('express');
 const { PrismaClient } = require('@prisma/client');
 const app = express();
@@ -10,16 +12,27 @@ app.post('/login', async (req, res) => {
     const { email, password } = req.body;
 
     try {
-        const user = await prisma.user.findUnique({
+        // Ahora usamos prisma.persona (el nombre del modelo en tu nuevo schema)
+        const persona = await prisma.persona.findUnique({
             where: { email: email }
         });
 
-        if (user && user.password === password) {
-            res.json({ message: "¡Entraste!", user: user.name });
+        // IMPORTANTE: el campo ahora se llama password_hash
+        if (persona && persona.password_hash === password) {
+            // Si coincide, enviamos los datos (el BigInt ya no dará error gracias al parche de arriba)
+            res.json({ 
+                success: true, 
+                message: "Bienvenido",
+                user: {
+                    id: persona.id,
+                    nombre: persona.nombre
+                }
+            });
         } else {
-            res.status(401).json({ error: "Email o clave incorrectos" });
+            res.status(401).json({ success: false, error: "Usuario o clave incorrectos" });
         }
     } catch (error) {
+        console.error(error);
         res.status(500).json({ error: "Error en el servidor" });
     }
 });
