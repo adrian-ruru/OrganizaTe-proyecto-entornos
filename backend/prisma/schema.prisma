@@ -7,9 +7,167 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model user {
-  id       Int     @id @default(autoincrement())
-  email    String  @unique(map: "User_email_key")
-  password String
-  name     String?
+model administrador {
+  persona_id BigInt              @id @db.UnsignedBigInt
+  nivel      administrador_nivel @default(ADMIN)
+  persona    persona             @relation(fields: [persona_id], references: [id], onDelete: Cascade, map: "fk_admin_persona")
+}
+
+model agenda_contacto {
+  usuario_id  BigInt   @db.UnsignedBigInt
+  contacto_id BigInt   @db.UnsignedBigInt
+  created_at  DateTime @default(now()) @db.DateTime(0)
+  persona     persona  @relation(fields: [contacto_id], references: [id], onDelete: Cascade, map: "fk_agenda_contacto")
+  usuario     usuario  @relation(fields: [usuario_id], references: [persona_id], onDelete: Cascade, map: "fk_agenda_usuario")
+
+  @@id([usuario_id, contacto_id])
+  @@index([contacto_id], map: "idx_agenda_contacto")
+}
+
+model etiqueta {
+  id             BigInt           @id @default(autoincrement()) @db.UnsignedBigInt
+  usuario_id     BigInt           @db.UnsignedBigInt
+  nombre         String           @db.VarChar(60)
+  color          String?          @db.VarChar(20)
+  created_at     DateTime         @default(now()) @db.DateTime(0)
+  updated_at     DateTime         @default(now()) @db.DateTime(0)
+  usuario        usuario          @relation(fields: [usuario_id], references: [persona_id], onDelete: Cascade, map: "fk_etiqueta_usuario")
+  tarea_etiqueta tarea_etiqueta[]
+
+  @@unique([usuario_id, nombre], map: "uq_etiqueta_usuario_nombre")
+  @@index([usuario_id], map: "idx_etiqueta_usuario")
+}
+
+model historico_actividad {
+  id          BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
+  usuario_id  BigInt   @db.UnsignedBigInt
+  tarea_id    BigInt?  @db.UnsignedBigInt
+  accion      String   @db.VarChar(120)
+  descripcion String?  @db.VarChar(255)
+  fecha       DateTime @default(now()) @db.DateTime(0)
+  tarea       tarea?   @relation(fields: [tarea_id], references: [id], map: "fk_hist_tarea")
+  usuario     usuario  @relation(fields: [usuario_id], references: [persona_id], onDelete: Cascade, map: "fk_hist_usuario")
+
+  @@index([tarea_id], map: "idx_hist_tarea")
+  @@index([usuario_id], map: "idx_hist_usuario")
+}
+
+model persona {
+  id              BigInt            @id @default(autoincrement()) @db.UnsignedBigInt
+  nombre          String            @db.VarChar(120)
+  email           String?           @unique(map: "uq_persona_email") @db.VarChar(190)
+  telefono        String?           @db.VarChar(30)
+  notas           String?           @db.Text
+  password_hash   String?           @db.VarChar(255)
+  created_at      DateTime          @default(now()) @db.DateTime(0)
+  updated_at      DateTime          @default(now()) @db.DateTime(0)
+  administrador   administrador?
+  agenda_contacto agenda_contacto[]
+  recordatorio    recordatorio[]
+  tarea           tarea[]
+  usuario         usuario?
+}
+
+model recordatorio {
+  id                  BigInt            @id @default(autoincrement()) @db.UnsignedBigInt
+  tarea_id            BigInt            @db.UnsignedBigInt
+  persona_contacto_id BigInt?           @db.UnsignedBigInt
+  titulo              String            @db.VarChar(150)
+  definicion          String?           @db.VarChar(255)
+  tipo                recordatorio_tipo @default(ABSOLUTO)
+  minutos_relativos   Int?
+  fecha_hora          DateTime?         @db.DateTime(0)
+  created_at          DateTime          @default(now()) @db.DateTime(0)
+  updated_at          DateTime          @default(now()) @db.DateTime(0)
+  persona             persona?          @relation(fields: [persona_contacto_id], references: [id], map: "fk_recordatorio_persona_contacto")
+  tarea               tarea             @relation(fields: [tarea_id], references: [id], onDelete: Cascade, map: "fk_recordatorio_tarea")
+
+  @@index([persona_contacto_id], map: "idx_recordatorio_contacto")
+  @@index([fecha_hora], map: "idx_recordatorio_fecha")
+  @@index([tarea_id], map: "idx_recordatorio_tarea")
+}
+
+model subtarea {
+  id          BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
+  tarea_id    BigInt   @db.UnsignedBigInt
+  descripcion String   @db.VarChar(255)
+  completada  Boolean  @default(false)
+  created_at  DateTime @default(now()) @db.DateTime(0)
+  updated_at  DateTime @default(now()) @db.DateTime(0)
+  tarea       tarea    @relation(fields: [tarea_id], references: [id], onDelete: Cascade, map: "fk_subtarea_tarea")
+
+  @@index([tarea_id], map: "idx_subtarea_tarea")
+}
+
+model tarea {
+  id                  BigInt                @id @default(autoincrement()) @db.UnsignedBigInt
+  usuario_id          BigInt                @db.UnsignedBigInt
+  persona_contacto_id BigInt?               @db.UnsignedBigInt
+  titulo              String                @db.VarChar(150)
+  descripcion         String?               @db.Text
+  fecha_hora          DateTime?             @db.DateTime(0)
+  prioridad           tarea_prioridad       @default(MEDIA)
+  estado              tarea_estado          @default(PENDIENTE)
+  cerrada_en          DateTime?             @db.DateTime(0)
+  created_at          DateTime              @default(now()) @db.DateTime(0)
+  updated_at          DateTime              @default(now()) @db.DateTime(0)
+  historico_actividad historico_actividad[]
+  recordatorio        recordatorio[]
+  subtarea            subtarea[]
+  persona             persona?              @relation(fields: [persona_contacto_id], references: [id], map: "fk_tarea_persona_contacto")
+  usuario             usuario               @relation(fields: [usuario_id], references: [persona_id], onDelete: Cascade, map: "fk_tarea_usuario")
+  tarea_etiqueta      tarea_etiqueta[]
+
+  @@index([persona_contacto_id], map: "idx_tarea_contacto")
+  @@index([estado], map: "idx_tarea_estado")
+  @@index([fecha_hora], map: "idx_tarea_fecha")
+  @@index([usuario_id], map: "idx_tarea_usuario")
+}
+
+model tarea_etiqueta {
+  tarea_id    BigInt   @db.UnsignedBigInt
+  etiqueta_id BigInt   @db.UnsignedBigInt
+  etiqueta    etiqueta @relation(fields: [etiqueta_id], references: [id], onDelete: Cascade, map: "fk_te_etiqueta")
+  tarea       tarea    @relation(fields: [tarea_id], references: [id], onDelete: Cascade, map: "fk_te_tarea")
+
+  @@id([tarea_id, etiqueta_id])
+  @@index([etiqueta_id], map: "idx_te_etiqueta")
+}
+
+model usuario {
+  persona_id          BigInt                @id @db.UnsignedBigInt
+  estado              usuario_estado        @default(ACTIVO)
+  agenda_contacto     agenda_contacto[]
+  etiqueta            etiqueta[]
+  historico_actividad historico_actividad[]
+  tarea               tarea[]
+  persona             persona               @relation(fields: [persona_id], references: [id], onDelete: Cascade, map: "fk_usuario_persona")
+}
+
+enum administrador_nivel {
+  ADMIN
+  SUPERADMIN
+}
+
+enum usuario_estado {
+  ACTIVO
+  INACTIVO
+}
+
+enum recordatorio_tipo {
+  ABSOLUTO
+  RELATIVO
+}
+
+enum tarea_prioridad {
+  BAJA
+  MEDIA
+  ALTA
+}
+
+enum tarea_estado {
+  PENDIENTE
+  EN_CURSO
+  FINALIZADA
+  ARCHIVADA
 }

@@ -1,11 +1,16 @@
+const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '../../.env') });
 BigInt.prototype.toJSON = function() { return this.toString() };
 
 const express = require('express');
+const cors = require('cors'); // <--- 1. Importa CORS
 const { PrismaClient } = require('@prisma/client');
+
 const app = express();
 const prisma = new PrismaClient();
 
-app.use(express.json()); // Para poder leer el email y password que envíes
+app.use(cors()); // <--- 2. ¡OBLIGATORIO! Esto permite que el frontend se conecte
+app.use(express.json());
 
 // RUTA DE LOGIN
 app.post('/login', async (req, res) => {
@@ -23,10 +28,8 @@ app.post('/login', async (req, res) => {
             res.json({ 
                 success: true, 
                 message: "Bienvenido",
-                user: {
-                    id: persona.id,
-                    nombre: persona.nombre
-                }
+                nombre: persona.nombre, // Sacamos el nombre fuera
+                id: persona.id          // Sacamos el ID fuera
             });
         } else {
             res.status(401).json({ success: false, error: "Usuario o clave incorrectos" });
