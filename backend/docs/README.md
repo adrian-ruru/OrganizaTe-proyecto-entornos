@@ -1,25 +1,61 @@
-                        **********INTRODUCCIÓN**********
-Se define la estructura base del backend en Node.js + Express siguiendo una separación por capas (routes, controllers, services, repositories) y carpetas de configuración, middlewares y utilidades. Se añaden archivos de arranque (app/server), ejemplo de variables de entorno (.env.example) y README inicial con comandos de ejecución. Esta organización permite escalar el proyecto y repartir trabajo sin conflictos.
+********** INTRODUCCIÓN **********
 
-                        **********Qué es cada archivo clave**********
-#src/app.js => Crea la app de Express, configura middlewares (JSON, CORS, rutas, errores).
+Se define la estructura base del backend en Node.js + Express siguiendo una separación por capas 
+(routes, controllers, services, repositories) y carpetas de configuración, middlewares y utilidades. 
+Se añaden archivos de arranque (app/server), ejemplo de variables de entorno (.env.example) y un README 
+inicial con comandos de ejecución. Esta organización permite escalar el proyecto y repartir trabajo 
+sin conflictos entre los miembros del equipo.
 
-#src/server.js => Arranca el servidor (app.listen(PORT)).
+********** QUÉ ES CADA ARCHIVO / CARPETA CLAVE **********
 
-#src/config/env.js => Lee variables de entorno (PORT, DB_URL, JWT_SECRET,...).
+src/app.js  
+Crea la aplicación Express y configura middlewares (JSON, CORS, rutas y gestión de errores).
 
-#src/config/db.js => Exporta el cliente Prisma y la conexión.
+src/server.js  
+Arranca el servidor utilizando app.listen(PORT).
 
-#routes/ => Define endpoints: /api/tareas, /api/auth, etc.
+src/config/env.js  
+Carga y centraliza las variables de entorno (PORT, DATABASE_URL, JWT_SECRET, etc.).
 
-#controllers/ => Reciben req/res, validan lo básico y llaman a services.
+src/config/db.js  
+Gestiona la conexión con la base de datos mediante Prisma.
 
-#services/ => Reglas de negocio, por ejemplo: "no más de 10 recordatorios", "cambiar estado", etc.
+routes/  
+Define los endpoints de la API (auth, tareas, contactos, recordatorios, etc.).
 
-#repositories/ => Acceso a datos (Prisma). Aquí van los findMany, create, etc.
+routes/index.routes.js  
+Agrupa y monta todas las rutas principales del backend.
 
-#middlewares/ => Auth (JWT), validaciones y manejo centralizado de errores.
+controllers/  
+Reciben las peticiones HTTP (req/res), realizan validaciones básicas y delegan la lógica en los servicios.
 
-#utils/ => Helpers: respuestas estándar, logs.
+services/  
+Contienen la lógica de negocio del sistema (validaciones, reglas, procesos).
 
-#prisma/ => schema.prisma + migraciones.
+repositories/  
+Capa de acceso a datos mediante Prisma (find, create, update, delete).
+
+middlewares/  
+Middlewares de autenticación (JWT), validación y gestión centralizada de errores.
+
+utils/  
+Funciones auxiliares (respuestas estándar, logs, helpers).
+
+prisma/  
+Definición del esquema de base de datos (schema.prisma) y migraciones.
+
+tests/  
+Carpeta reservada para pruebas automáticas del backend.
+
+docs/  
+Documentación técnica adicional del backend.
+
+********** VARIABLES DE ENTORNO **********
+
+Se incluye el archivo .env.example con las variables necesarias para ejecutar el backend.
+El archivo .env real no debe subirse al repositorio.
+
+********** EJECUCIÓN **********
+
+npm install  
+npm run dev
