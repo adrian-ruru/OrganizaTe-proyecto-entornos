@@ -329,8 +329,43 @@ textarea {
 
 .board-shell {
   display: grid;
-  grid-template-columns: 280px 1fr;
-  gap: 24px;
+  grid-template-columns: 72px 280px 1fr 320px;
+  gap: 20px;
+  align-items: start;
+}
+
+.board-toolbar {
+  background: var(--color-surface);
+  border-radius: 20px;
+  box-shadow: var(--shadow-sm);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  position: sticky;
+  top: 96px;
+  height: fit-content;
+}
+
+.toolbar-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  border: 1px solid var(--color-border);
+  background: #f4f5fb;
+  display: grid;
+  place-items: center;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.toolbar-btn.active,
+.toolbar-btn:hover {
+  background: rgba(107, 78, 255, 0.14);
+  border-color: rgba(107, 78, 255, 0.4);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
 }
 
 .board-panel {
@@ -344,13 +379,40 @@ textarea {
 }
 
 .board-canvas {
-  background: white;
+  background-color: #f8f8f8;
+  background-image: linear-gradient(#e6e6e6 1px, transparent 1px),
+    linear-gradient(90deg, #e6e6e6 1px, transparent 1px);
+  background-size: 32px 32px;
   border-radius: var(--radius-md);
-  border: 2px dashed rgba(107, 78, 255, 0.15);
-  min-height: 500px;
+  min-height: 560px;
   position: relative;
   overflow: hidden;
   box-shadow: var(--shadow-sm);
+}
+
+.board-controls {
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  background: white;
+  border-radius: 999px;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: var(--shadow-sm);
+}
+
+.board-controls button {
+  border: none;
+  background: transparent;
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+
+.board-controls span {
+  font-weight: 600;
+  color: var(--color-muted);
 }
 
 .board-item {
