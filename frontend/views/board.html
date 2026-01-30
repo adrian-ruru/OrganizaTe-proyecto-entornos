@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OrganizaTé | Pizarra</title>
+  <link rel="stylesheet" href="../assets/css/variables.css" />
+  <link rel="stylesheet" href="../assets/css/main.css" />
+</head>
+<body class="page" data-page="board">
+  <header class="topbar">
+    <div class="container topbar-content">
+      <a class="brand" href="dashboard.html">Organiza<span>Té</span></a>
+      <nav class="nav-links" data-nav>
+        <a href="dashboard.html" data-page-link="dashboard">Dashboard</a>
+        <a href="tasks.html" data-page-link="tasks">Tareas</a>
+        <a href="reminders.html" data-page-link="reminders">Recordatorios</a>
+        <a href="contacts.html" data-page-link="contacts">Contactos</a>
+      </nav>
+      <button class="nav-toggle" data-nav-toggle aria-label="Abrir menú">☰</button>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <div class="container">
+      <h1 class="section-title" data-board-title>Pizarra colaborativa</h1>
+      <div class="board-shell">
+        <aside class="board-toolbar" aria-label="Herramientas de la pizarra">
+          <button class="toolbar-btn active" title="Seleccionar">🖱️</button>
+          <button class="toolbar-btn" title="Post-it">🗒️</button>
+          <button class="toolbar-btn" title="Conector">🔗</button>
+          <button class="toolbar-btn" title="Texto">🔤</button>
+          <button class="toolbar-btn" title="Forma">⬜</button>
+          <button class="toolbar-btn" title="Sticker">✨</button>
+          <button class="toolbar-btn" title="Subir imagen">🖼️</button>
+        </aside>
+        <aside class="board-panel">
+          <h2 class="section-title">Añadir elemento</h2>
+          <form class="form-grid" data-board-form>
+            <label>
+              Tipo de tarjeta
+              <select data-item-type>
+                <option value="note">Post-it</option>
+                <option value="text">Texto</option>
+                <option value="image">Imagen</option>
+              </select>
+            </label>
+            <label>
+              Título
+              <input type="text" required data-item-content />
+            </label>
+            <label>
+              Imagen (solo si eliges "Imagen")
+              <input type="file" accept="image/*" data-item-image />
+            </label>
+            <button class="btn btn-primary" type="submit">Agregar</button>
+          </form>
+          <p style="color: var(--color-muted);">Arrastra las tarjetas sobre la pizarra y haz doble clic para editar textos.</p>
+        </aside>
+        <section class="board-canvas" data-board-canvas>
+          <div class="board-controls">
+            <button title="Alejar">−</button>
+            <span>100%</span>
+            <button title="Acercar">＋</button>
+          </div>
+        </section>
+        <aside class="board-panel">
+          <h2 class="section-title">Documento</h2>
+          <p style="color: var(--color-muted);">Describe el objetivo de la tarea, agrega enlaces clave y registra acuerdos.</p>
+          <div class="list">
+            <div class="list-item">
+              <strong>Plantillas rápidas</strong>
+              <span>Resumen de objetivos</span>
+              <span>Investigación</span>
+              <span>Notas de reunión</span>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </main>
+
+  <script src="../assets/js/main.js" type="module"></script>
+  <script src="../assets/js/board.js" type="module"></script>
+</body>
+</html>
