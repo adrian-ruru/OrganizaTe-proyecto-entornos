@@ -25,6 +25,15 @@
     <div class="container">
       <h1 class="section-title" data-board-title>Pizarra colaborativa</h1>
       <div class="board-shell">
+        <aside class="board-toolbar" aria-label="Herramientas de la pizarra">
+          <button class="toolbar-btn active" title="Seleccionar">🖱️</button>
+          <button class="toolbar-btn" title="Post-it">🗒️</button>
+          <button class="toolbar-btn" title="Conector">🔗</button>
+          <button class="toolbar-btn" title="Texto">🔤</button>
+          <button class="toolbar-btn" title="Forma">⬜</button>
+          <button class="toolbar-btn" title="Sticker">✨</button>
+          <button class="toolbar-btn" title="Subir imagen">🖼️</button>
+        </aside>
         <aside class="board-panel">
           <h2 class="section-title">Añadir elemento</h2>
           <form class="form-grid" data-board-form>
@@ -48,7 +57,25 @@
           </form>
           <p style="color: var(--color-muted);">Arrastra las tarjetas sobre la pizarra y haz doble clic para editar textos.</p>
         </aside>
-        <section class="board-canvas" data-board-canvas></section>
+        <section class="board-canvas" data-board-canvas>
+          <div class="board-controls">
+            <button title="Alejar">−</button>
+            <span>100%</span>
+            <button title="Acercar">＋</button>
+          </div>
+        </section>
+        <aside class="board-panel">
+          <h2 class="section-title">Documento</h2>
+          <p style="color: var(--color-muted);">Describe el objetivo de la tarea, agrega enlaces clave y registra acuerdos.</p>
+          <div class="list">
+            <div class="list-item">
+              <strong>Plantillas rápidas</strong>
+              <span>Resumen de objetivos</span>
+              <span>Investigación</span>
+              <span>Notas de reunión</span>
+            </div>
+          </div>
+        </aside>
       </div>
     </div>
   </main>
