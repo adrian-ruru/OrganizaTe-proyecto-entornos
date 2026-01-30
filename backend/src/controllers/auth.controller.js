@@ -1,4 +1,7 @@
+import express from 'express';
+import authRoutes from './routes/auth.routes.js';
 import { createUser } from '../services/user.service.js';
+
 
 export async function register(req, res) {
   const { nombre, email, password } = req.body;
@@ -28,3 +31,11 @@ export async function register(req, res) {
     });
   }
 }
+
+
+const app = express();
+
+app.use(express.json());
+app.use('/api/auth', authRoutes);
+
+export default app;
