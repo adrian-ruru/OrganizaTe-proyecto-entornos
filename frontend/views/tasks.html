@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OrganizaTé | Tareas</title>
+  <link rel="stylesheet" href="../assets/css/variables.css" />
+  <link rel="stylesheet" href="../assets/css/main.css" />
+</head>
+<body class="page" data-page="tasks">
+  <header class="topbar">
+    <div class="container topbar-content">
+      <a class="brand" href="dashboard.html">Organiza<span>Té</span></a>
+      <nav class="nav-links" data-nav>
+        <a href="dashboard.html" data-page-link="dashboard">Dashboard</a>
+        <a href="tasks.html" data-page-link="tasks">Tareas</a>
+        <a href="reminders.html" data-page-link="reminders">Recordatorios</a>
+        <a href="contacts.html" data-page-link="contacts">Contactos</a>
+      </nav>
+      <button class="nav-toggle" data-nav-toggle aria-label="Abrir menú">☰</button>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <div class="container">
+      <h1 class="section-title">Tablero Kanban</h1>
+      <p style="color: var(--color-muted); margin-bottom: 24px;">Arrastra el foco del equipo con columnas claras y abre una pizarra colaborativa para cada tarea.</p>
+      <div class="kanban" data-kanban></div>
+    </div>
+  </main>
+
+  <div class="modal" data-modal>
+    <div class="modal-content">
+      <header style="display:flex; justify-content: space-between; align-items: center;">
+        <h2 data-modal-title>Nueva tarea</h2>
+        <button class="btn btn-secondary" type="button" data-modal-close>Cerrar</button>
+      </header>
+      <form class="form-grid" data-task-form>
+        <input type="hidden" data-task-id />
+        <label>
+          Título
+          <input type="text" required data-task-title />
+        </label>
+        <label>
+          Descripción
+          <textarea rows="3" data-task-description></textarea>
+        </label>
+        <label>
+          Prioridad
+          <select data-task-priority>
+            <option value="Baja">Baja</option>
+            <option value="Media" selected>Media</option>
+            <option value="Alta">Alta</option>
+          </select>
+        </label>
+        <label>
+          Estado
+          <select data-task-status>
+            <option value="Por hacer">Por hacer</option>
+            <option value="En progreso">En progreso</option>
+            <option value="Completado">Completado</option>
+          </select>
+        </label>
+        <button class="btn btn-primary" type="submit">Guardar tarea</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="../assets/js/main.js" type="module"></script>
+  <script src="../assets/js/tasks.js" type="module"></script>
+</body>
+</html>

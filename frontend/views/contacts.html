@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OrganizaTé | Contactos</title>
+  <link rel="stylesheet" href="../assets/css/variables.css" />
+  <link rel="stylesheet" href="../assets/css/main.css" />
+</head>
+<body class="page" data-page="contacts">
+  <header class="topbar">
+    <div class="container topbar-content">
+      <a class="brand" href="dashboard.html">Organiza<span>Té</span></a>
+      <nav class="nav-links" data-nav>
+        <a href="dashboard.html" data-page-link="dashboard">Dashboard</a>
+        <a href="tasks.html" data-page-link="tasks">Tareas</a>
+        <a href="reminders.html" data-page-link="reminders">Recordatorios</a>
+        <a href="contacts.html" data-page-link="contacts">Contactos</a>
+      </nav>
+      <button class="nav-toggle" data-nav-toggle aria-label="Abrir menú">☰</button>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <div class="container">
+      <section class="card" style="margin-bottom: 24px;">
+        <h1 class="section-title">Contactos del equipo</h1>
+        <form class="form-grid" data-contacts-form>
+          <label>
+            Nombre
+            <input type="text" required data-contact-name />
+          </label>
+          <label>
+            Rol
+            <input type="text" placeholder="Diseño, Producto..." data-contact-role />
+          </label>
+          <label>
+            Email
+            <input type="email" required data-contact-email />
+          </label>
+          <button class="btn btn-primary" type="submit">Agregar contacto</button>
+        </form>
+      </section>
+
+      <section>
+        <h2 class="section-title">Personas clave</h2>
+        <div class="list" data-contacts-list></div>
+      </section>
+    </div>
+  </main>
+
+  <script src="../assets/js/main.js" type="module"></script>
+  <script src="../assets/js/contacts.js" type="module"></script>
+</body>
+</html>
