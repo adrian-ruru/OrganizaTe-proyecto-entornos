@@ -26,13 +26,15 @@
       <h1 class="section-title" data-board-title>Pizarra colaborativa</h1>
       <div class="board-shell">
         <aside class="board-toolbar" aria-label="Herramientas de la pizarra">
-          <button class="toolbar-btn active" title="Seleccionar">🖱️</button>
-          <button class="toolbar-btn" title="Post-it">🗒️</button>
-          <button class="toolbar-btn" title="Conector">🔗</button>
-          <button class="toolbar-btn" title="Texto">🔤</button>
-          <button class="toolbar-btn" title="Forma">⬜</button>
-          <button class="toolbar-btn" title="Sticker">✨</button>
-          <button class="toolbar-btn" title="Subir imagen">🖼️</button>
+          <button class="toolbar-btn active" title="Seleccionar" data-tool="select">🖱️</button>
+          <button class="toolbar-btn" title="Pincel" data-tool="draw">🖌️</button>
+          <button class="toolbar-btn" title="Post-it" data-tool="note">🗒️</button>
+          <button class="toolbar-btn" title="Texto" data-tool="text">🔤</button>
+          <button class="toolbar-btn" title="Link" data-tool="link">🔗</button>
+          <label class="toolbar-btn" title="Subir imagen">
+            🖼️
+            <input type="file" accept="image/*" data-tool-image hidden />
+          </label>
         </aside>
         <aside class="board-panel">
           <h2 class="section-title">Añadir elemento</h2>
@@ -42,6 +44,7 @@
               <select data-item-type>
                 <option value="note">Post-it</option>
                 <option value="text">Texto</option>
+                <option value="link">Link</option>
                 <option value="image">Imagen</option>
               </select>
             </label>
@@ -50,14 +53,44 @@
               <input type="text" required data-item-content />
             </label>
             <label>
+              Link (solo si eliges "Link")
+              <input type="url" placeholder="https://..." data-item-link />
+            </label>
+            <label>
               Imagen (solo si eliges "Imagen")
               <input type="file" accept="image/*" data-item-image />
             </label>
+            <label>
+              Color del post-it
+              <select data-item-color>
+                <option value="#fff6bf">Amarillo</option>
+                <option value="#ffd1e8">Rosa</option>
+                <option value="#c9f2ff">Celeste</option>
+                <option value="#d1ffe0">Verde</option>
+                <option value="#e2d8ff">Lila</option>
+                <option value="#ffe0b2">Naranja</option>
+                <option value="#c8e6c9">Verde claro</option>
+                <option value="#fff9c4">Crema</option>
+                <option value="#f8bbd0">Magenta suave</option>
+                <option value="#b2ebf2">Turquesa</option>
+              </select>
+            </label>
             <button class="btn btn-primary" type="submit">Agregar</button>
           </form>
-          <p style="color: var(--color-muted);">Arrastra las tarjetas sobre la pizarra y haz doble clic para editar textos.</p>
+          <div class="form-grid">
+            <label>
+              Color del pincel
+              <input type="color" value="#6b4eff" data-draw-color />
+            </label>
+            <label>
+              Grosor
+              <input type="range" min="2" max="18" value="6" data-draw-size />
+            </label>
+          </div>
+          <p style="color: var(--color-muted);">Usa el pincel para dibujar, y crea post-its, textos e imágenes sobre la pizarra.</p>
         </aside>
         <section class="board-canvas" data-board-canvas>
+          <canvas class="board-drawing" data-board-drawing></canvas>
           <div class="board-controls">
             <button title="Alejar">−</button>
             <span>100%</span>
