@@ -26,90 +26,91 @@
   <main class="board-main">
     <section class="board-workspace" data-board-canvas>
       <canvas class="board-drawing" data-board-drawing></canvas>
+
+      <aside class="board-toolbar" aria-label="Herramientas de la pizarra">
+        <button class="toolbar-btn active" title="Seleccionar" data-tool="select">🖱️</button>
+        <button class="toolbar-btn" title="Pincel" data-tool="draw">🖌️</button>
+        <button class="toolbar-btn" title="Post-it" data-tool="note">🗒️</button>
+        <button class="toolbar-btn" title="Texto" data-tool="text">🔤</button>
+        <button class="toolbar-btn" title="Link" data-tool="link">🔗</button>
+        <label class="toolbar-btn" title="Imagen">
+          🖼️
+          <input type="file" accept="image/*" data-tool-image hidden />
+        </label>
+      </aside>
+
+      <aside class="board-mini-menu" data-mini-menu>
+        <h1 class="section-title" data-board-title>Pizarra colaborativa</h1>
+
+        <div class="tool-panel" data-panel="select">
+          <p>Selecciona un elemento para moverlo, redimensionarlo y editar su texto.</p>
+        </div>
+
+        <div class="tool-panel" data-panel="draw">
+          <label>Color del pincel
+            <input type="color" value="#004744" data-draw-color />
+          </label>
+          <label>Grosor
+            <input type="range" min="2" max="18" value="6" data-draw-size />
+          </label>
+        </div>
+
+        <div class="tool-panel" data-panel="note">
+          <label>Título
+            <input type="text" data-note-title placeholder="Ej: Ideas sprint" />
+          </label>
+          <label>Color post-it
+            <input type="color" data-note-bg value="#f0e766" />
+          </label>
+          <button class="btn btn-primary" type="button" data-create-item="note">Añadir post-it</button>
+        </div>
+
+        <div class="tool-panel" data-panel="text">
+          <label>Texto plano
+            <textarea rows="3" data-text-body placeholder="Escribe texto plano..."></textarea>
+          </label>
+          <button class="btn btn-primary" type="button" data-create-item="text">Añadir texto</button>
+        </div>
+
+        <div class="tool-panel" data-panel="link">
+          <label>Título
+            <input type="text" data-link-title placeholder="Ej: Documentación" />
+          </label>
+          <label>URL
+            <input type="url" data-link-url placeholder="https://..." />
+          </label>
+          <button class="btn btn-primary" type="button" data-create-item="link">Añadir link</button>
+        </div>
+
+        <div class="tool-panel" data-panel="typography">
+          <h2 class="section-title">Formato de texto</h2>
+          <label>Fuente
+            <select data-text-font>
+              <option value="'Times New Roman', serif">Times New Roman</option>
+              <option value="Arial, sans-serif">Arial</option>
+              <option value="Calibri, sans-serif">Calibri</option>
+            </select>
+          </label>
+          <label>Tamaño (px)
+            <input type="number" min="10" max="96" value="20" data-text-size />
+          </label>
+          <label>Color
+            <input type="color" value="#3b3b3b" data-text-color />
+          </label>
+          <div class="text-style-actions">
+            <button type="button" class="btn btn-secondary" data-style-toggle="bold"><strong>B</strong></button>
+            <button type="button" class="btn btn-secondary" data-style-toggle="italic"><em>I</em></button>
+            <button type="button" class="btn btn-secondary" data-style-toggle="underline"><u>U</u></button>
+          </div>
+        </div>
+      </aside>
+
       <div class="board-controls">
         <button title="Alejar">−</button>
         <span>100%</span>
         <button title="Acercar">＋</button>
       </div>
     </section>
-
-    <aside class="board-toolbar" aria-label="Herramientas de la pizarra">
-      <button class="toolbar-btn active" title="Seleccionar" data-tool="select">🖱️</button>
-      <button class="toolbar-btn" title="Pincel" data-tool="draw">🖌️</button>
-      <button class="toolbar-btn" title="Post-it" data-tool="note">🗒️</button>
-      <button class="toolbar-btn" title="Texto" data-tool="text">🔤</button>
-      <button class="toolbar-btn" title="Link" data-tool="link">🔗</button>
-      <label class="toolbar-btn" title="Imagen">
-        🖼️
-        <input type="file" accept="image/*" data-tool-image hidden />
-      </label>
-    </aside>
-
-    <aside class="board-mini-menu" data-mini-menu>
-      <h1 class="section-title" data-board-title>Pizarra colaborativa</h1>
-
-      <div class="tool-panel" data-panel="select">
-        <p>Selecciona un elemento para moverlo, redimensionarlo y editar su texto.</p>
-      </div>
-
-      <div class="tool-panel" data-panel="draw">
-        <label>Color del pincel
-          <input type="color" value="#004744" data-draw-color />
-        </label>
-        <label>Grosor
-          <input type="range" min="2" max="18" value="6" data-draw-size />
-        </label>
-      </div>
-
-      <div class="tool-panel" data-panel="note">
-        <label>Título
-          <input type="text" data-note-title placeholder="Ej: Ideas sprint" />
-        </label>
-        <label>Color post-it
-          <input type="color" data-note-bg value="#f0e766" />
-        </label>
-        <button class="btn btn-primary" type="button" data-create-item="note">Añadir post-it</button>
-      </div>
-
-      <div class="tool-panel" data-panel="text">
-        <label>Texto plano
-          <textarea rows="3" data-text-body placeholder="Escribe texto plano..."></textarea>
-        </label>
-        <button class="btn btn-primary" type="button" data-create-item="text">Añadir texto</button>
-      </div>
-
-      <div class="tool-panel" data-panel="link">
-        <label>Título
-          <input type="text" data-link-title placeholder="Ej: Documentación" />
-        </label>
-        <label>URL
-          <input type="url" data-link-url placeholder="https://..." />
-        </label>
-        <button class="btn btn-primary" type="button" data-create-item="link">Añadir link</button>
-      </div>
-
-      <div class="tool-panel" data-panel="typography">
-        <h2 class="section-title">Formato de texto</h2>
-        <label>Fuente
-          <select data-text-font>
-            <option value="'Times New Roman', serif">Times New Roman</option>
-            <option value="Arial, sans-serif">Arial</option>
-            <option value="Calibri, sans-serif">Calibri</option>
-          </select>
-        </label>
-        <label>Tamaño (px)
-          <input type="number" min="10" max="96" value="20" data-text-size />
-        </label>
-        <label>Color
-          <input type="color" value="#3b3b3b" data-text-color />
-        </label>
-        <div class="text-style-actions">
-          <button type="button" class="btn btn-secondary" data-style-toggle="bold"><strong>B</strong></button>
-          <button type="button" class="btn btn-secondary" data-style-toggle="italic"><em>I</em></button>
-          <button type="button" class="btn btn-secondary" data-style-toggle="underline"><u>U</u></button>
-        </div>
-      </div>
-    </aside>
   </main>
 
   <script src="../assets/js/main.js" type="module"></script>
