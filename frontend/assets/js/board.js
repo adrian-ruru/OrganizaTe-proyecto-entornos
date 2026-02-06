@@ -53,29 +53,7 @@ function getBoard() {
   if (!boards[key]) {
     boards[key] = { items: [], drawings: [] };
   }
-  normalizeBoard(boards[key]);
   return boards[key];
-}
-
-function normalizeBoard(board) {
-  board.items = (board.items || []).map((item, index) => {
-    const fallbackW = item.type === 'text' ? 260 : item.type === 'link' ? 240 : item.type === 'image' ? 260 : 220;
-    const fallbackH = item.type === 'text' ? 90 : item.type === 'link' ? 90 : item.type === 'image' ? 190 : 160;
-    return {
-      x: 120 + index * 16,
-      y: 120 + index * 16,
-      w: fallbackW,
-      h: fallbackH,
-      textStyle: getDefaultTextStyle(),
-      ...item,
-      x: Number.isFinite(item.x) ? item.x : 120 + index * 16,
-      y: Number.isFinite(item.y) ? item.y : 120 + index * 16,
-      w: Number.isFinite(item.w) ? item.w : fallbackW,
-      h: Number.isFinite(item.h) ? item.h : fallbackH,
-      textStyle: { ...getDefaultTextStyle(), ...(item.textStyle || {}) },
-    };
-  });
-  board.drawings = Array.isArray(board.drawings) ? board.drawings : [];
 }
 
 function getDefaultTextStyle() {
@@ -201,8 +179,6 @@ function setActiveTool(tool) {
 }
 
 function pointerDown(event) {
-  if (event.target.closest('.board-toolbar, .board-mini-menu, .board-controls')) return;
-
   const resizeHandle = event.target.closest('.resize-handle');
   if (resizeHandle && activeTool === 'select') {
     const itemEl = resizeHandle.closest('.board-item');
@@ -227,6 +203,7 @@ function pointerDown(event) {
   refreshSelectionUI();
   syncStyleInputs(getSelectedItem());
 
+  if (event.target.closest('.board-item-content')) return;
 
   draggingItem = card;
   const rect = card.getBoundingClientRect();
@@ -365,14 +342,12 @@ createButtons.forEach((btn) => {
         body: noteTitleInput.value.trim() || 'Nuevo post-it',
         color: noteBgInput.value || '#f0e766',
       });
-      setActiveTool('select');
       return;
     }
     if (type === 'text') {
       createItem('text', {
         body: textBodyInput.value.trim() || 'Texto plano',
       });
-      setActiveTool('select');
       return;
     }
     if (type === 'link') {
@@ -382,7 +357,6 @@ createButtons.forEach((btn) => {
         w: 240,
         h: 90,
       });
-      setActiveTool('select');
     }
   });
 });
@@ -398,7 +372,6 @@ if (toolImageInput) {
     const reader = new FileReader();
     reader.onload = () => {
       createItem('image', { src: reader.result, title: file.name, w: 260, h: 190 });
-      setActiveTool('select');
     };
     reader.readAsDataURL(file);
   });
