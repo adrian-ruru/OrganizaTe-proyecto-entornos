@@ -7,19 +7,32 @@ const BOARDS_KEY = 'organizate_boards';
 const boardTitle = document.querySelector('[data-board-title]');
 const boardCanvas = document.querySelector('[data-board-canvas]');
 const boardDrawing = document.querySelector('[data-board-drawing]');
-const form = document.querySelector('[data-board-form]');
-const itemType = document.querySelector('[data-item-type]');
-const itemContent = document.querySelector('[data-item-content]');
-const itemImage = document.querySelector('[data-item-image]');
-const itemLink = document.querySelector('[data-item-link]');
-const itemColor = document.querySelector('[data-item-color]');
 const drawColorInput = document.querySelector('[data-draw-color]');
 const drawSizeInput = document.querySelector('[data-draw-size]');
 const toolButtons = document.querySelectorAll('[data-tool]');
 const toolImageInput = document.querySelector('[data-tool-image]');
+const toolPanels = document.querySelectorAll('[data-panel]');
+const createButtons = document.querySelectorAll('[data-create-item]');
+
+const noteTitleInput = document.querySelector('[data-note-title]');
+const noteBgInput = document.querySelector('[data-note-bg]');
+const textBodyInput = document.querySelector('[data-text-body]');
+const linkTitleInput = document.querySelector('[data-link-title]');
+const linkUrlInput = document.querySelector('[data-link-url]');
+
+const textFontInput = document.querySelector('[data-text-font]');
+const textSizeInput = document.querySelector('[data-text-size]');
+const textColorInput = document.querySelector('[data-text-color]');
+const styleToggles = document.querySelectorAll('[data-style-toggle]');
 
 let boards = storage.get(BOARDS_KEY, {});
 let activeTool = 'select';
+let selectedItemId = null;
+let draggingItem = null;
+let resizingItem = null;
+let dragOffset = { x: 0, y: 0 };
+let resizeStart = null;
+
 let isDrawing = false;
 let lastPoint = null;
 
@@ -35,190 +48,233 @@ function saveBoards() {
   storage.set(BOARDS_KEY, boards);
 }
 
-function getItems() {
-  if (!boards[taskId]) {
-    boards[taskId] = { items: [], drawings: [] };
+function getBoard() {
+  const key = taskId || 'global';
+  if (!boards[key]) {
+    boards[key] = { items: [], drawings: [] };
   }
-  return boards[taskId];
+  return boards[key];
+}
+
+function getDefaultTextStyle() {
+  return {
+    fontFamily: "'Times New Roman', serif",
+    fontSize: 20,
+    color: '#3b3b3b',
+    bold: false,
+    italic: false,
+    underline: false,
+  };
+}
+
+function getSelectedItem() {
+  if (!selectedItemId) return null;
+  return getBoard().items.find((item) => item.id === selectedItemId) || null;
+}
+
+function showPanel(tool) {
+  toolPanels.forEach((panel) => {
+    panel.classList.toggle('active', panel.dataset.panel === tool || panel.dataset.panel === 'typography');
+  });
+}
+
+function applyTextStyle(el, style = getDefaultTextStyle()) {
+  el.style.fontFamily = style.fontFamily;
+  el.style.fontSize = `${style.fontSize}px`;
+  el.style.color = style.color;
+  el.style.fontWeight = style.bold ? '700' : '400';
+  el.style.fontStyle = style.italic ? 'italic' : 'normal';
+  el.style.textDecoration = style.underline ? 'underline' : 'none';
+}
+
+function syncStyleInputs(item) {
+  if (!item || (item.type !== 'note' && item.type !== 'text')) {
+    return;
+  }
+  const style = item.textStyle || getDefaultTextStyle();
+  textFontInput.value = style.fontFamily;
+  textSizeInput.value = style.fontSize;
+  textColorInput.value = style.color;
+  styleToggles.forEach((btn) => {
+    btn.classList.toggle('active', Boolean(style[btn.dataset.styleToggle]));
+  });
+}
+
+
+function refreshSelectionUI() {
+  boardCanvas.querySelectorAll('.board-item').forEach((el) => {
+    el.classList.toggle('selected', el.dataset.itemId === selectedItemId);
+  });
 }
 
 function renderBoard() {
-  if (!boardCanvas) {
-    return;
-  }
-  const drawingEl = boardCanvas.querySelector('[data-board-drawing]');
-  boardCanvas.innerHTML = '';
-  if (drawingEl) {
-    boardCanvas.appendChild(drawingEl);
-  }
-  const controls = document.createElement('div');
-  controls.className = 'board-controls';
-  controls.innerHTML = `
-    <button title="Alejar">−</button>
-    <span>100%</span>
-    <button title="Acercar">＋</button>
-  `;
-  boardCanvas.appendChild(controls);
-  const { items } = getItems();
+  if (!boardCanvas) return;
+  boardCanvas.querySelectorAll('.board-item').forEach((el) => el.remove());
+
+  const { items } = getBoard();
   items.forEach((item) => {
     const el = document.createElement('article');
     el.className = `board-item ${item.type}`;
+    if (item.id === selectedItemId) el.classList.add('selected');
     el.dataset.itemId = item.id;
     el.style.left = `${item.x}px`;
     el.style.top = `${item.y}px`;
+    el.style.width = `${item.w}px`;
+    el.style.height = `${item.h}px`;
+
     if (item.type === 'image') {
-      el.innerHTML = `<strong>${escapeHTML(item.title)}</strong><img src="${item.src}" alt="${escapeHTML(item.title)}" />`;
+      el.innerHTML = `<img src="${item.src}" alt="${escapeHTML(item.title || 'Imagen')}" />`;
     } else if (item.type === 'link') {
-      el.innerHTML = `
-        <strong>${escapeHTML(item.title)}</strong>
-        <a href="${escapeHTML(item.url)}" target="_blank" rel="noopener">Abrir enlace</a>
-      `;
+      el.innerHTML = `<a href="${escapeHTML(item.url)}" target="_blank" rel="noopener">${escapeHTML(item.title || item.url)}</a>`;
     } else {
-      el.style.background = item.color || '';
-      el.innerHTML = `
-        <strong>${escapeHTML(item.title)}</strong>
-        <textarea data-item-text="${item.id}">${item.body}</textarea>
-      `;
+      if (item.type === 'note') {
+        el.style.background = item.color || '#f0e766';
+      }
+      const content = document.createElement('div');
+      content.className = 'board-item-content';
+      content.contentEditable = 'true';
+      content.dataset.itemText = item.id;
+      content.textContent = item.body || '';
+      applyTextStyle(content, item.textStyle || getDefaultTextStyle());
+      el.appendChild(content);
     }
+
+    const handle = document.createElement('span');
+    handle.className = 'resize-handle';
+    handle.dataset.resizeId = item.id;
+    el.appendChild(handle);
     boardCanvas.appendChild(el);
   });
+
   drawAll();
 }
 
-function addItem(event) {
-  event.preventDefault();
-  if (!taskId) {
-    return;
-  }
-  const type = itemType.value;
-  const title = itemContent.value.trim();
-  if (!title) {
-    itemContent.focus();
-    return;
-  }
-  const boardData = getItems();
-  if (type === 'image') {
-    const file = itemImage.files[0];
-    if (!file) {
-      itemImage.focus();
-      return;
-    }
-    const reader = new FileReader();
-    reader.onload = () => {
-      boardData.items.push({
-        id: createId('board'),
-        type,
-        title,
-        src: reader.result,
-        x: 80 + boardData.items.length * 20,
-        y: 80 + boardData.items.length * 20,
-      });
-      saveBoards();
-      renderBoard();
-      form.reset();
-    };
-    reader.readAsDataURL(file);
-  } else if (type === 'link') {
-    const url = itemLink.value.trim();
-    boardData.items.push({
-      id: createId('board'),
-      type,
-      title,
-      url: url || 'https://',
-      x: 80 + boardData.items.length * 20,
-      y: 80 + boardData.items.length * 20,
-    });
-    saveBoards();
-    renderBoard();
-    form.reset();
-  } else {
-    boardData.items.push({
-      id: createId('board'),
-      type,
-      title,
-      body: '',
-      color: itemColor.value,
-      x: 80 + boardData.items.length * 20,
-      y: 80 + boardData.items.length * 20,
-    });
-    saveBoards();
-    renderBoard();
-    form.reset();
-  }
-}
-
-let dragTarget = null;
-let offsetX = 0;
-let offsetY = 0;
-
-function onPointerDown(event) {
-  const card = event.target.closest('.board-item');
-  if (!card || activeTool !== 'select') {
-    return;
-  }
-  dragTarget = card;
-  const rect = card.getBoundingClientRect();
-  offsetX = event.clientX - rect.left;
-  offsetY = event.clientY - rect.top;
-  card.classList.add('dragging');
-}
-
-function onPointerMove(event) {
-  if (!dragTarget) {
-    return;
-  }
-  const canvasRect = boardCanvas.getBoundingClientRect();
-  const x = event.clientX - canvasRect.left - offsetX;
-  const y = event.clientY - canvasRect.top - offsetY;
-  dragTarget.style.left = `${Math.max(0, x)}px`;
-  dragTarget.style.top = `${Math.max(0, y)}px`;
-}
-
-function onPointerUp() {
-  if (!dragTarget) {
-    return;
-  }
-  const id = dragTarget.dataset.itemId;
-  const boardData = getItems();
-  const item = boardData.items.find((entry) => entry.id === id);
-  if (item) {
-    item.x = parseFloat(dragTarget.style.left);
-    item.y = parseFloat(dragTarget.style.top);
-    saveBoards();
-  }
-  dragTarget.classList.remove('dragging');
-  dragTarget = null;
-}
-
-function handleTextChange(event) {
-  const textarea = event.target.closest('[data-item-text]');
-  if (!textarea) {
-    return;
-  }
-  const itemId = textarea.dataset.itemText;
-  const boardData = getItems();
-  const item = boardData.items.find((entry) => entry.id === itemId);
-  if (item) {
-    item.body = textarea.value;
-    saveBoards();
-  }
+function createItem(type, payload = {}) {
+  const board = getBoard();
+  const item = {
+    id: createId(type),
+    type,
+    x: 150 + board.items.length * 18,
+    y: 130 + board.items.length * 18,
+    w: type === 'text' ? 260 : 220,
+    h: type === 'text' ? 90 : 160,
+    textStyle: getDefaultTextStyle(),
+    ...payload,
+  };
+  board.items.push(item);
+  selectedItemId = item.id;
+  saveBoards();
+  renderBoard();
+  syncStyleInputs(item);
 }
 
 function setActiveTool(tool) {
   activeTool = tool;
-  toolButtons.forEach((button) => {
-    button.classList.toggle('active', button.dataset.tool === tool);
-  });
+  toolButtons.forEach((btn) => btn.classList.toggle('active', btn.dataset.tool === tool));
+  showPanel(tool);
   if (boardDrawing) {
     boardDrawing.style.pointerEvents = tool === 'draw' ? 'auto' : 'none';
     boardDrawing.style.cursor = tool === 'draw' ? 'crosshair' : 'default';
   }
 }
 
-function resizeCanvas() {
-  if (!boardDrawing || !boardCanvas) {
+function pointerDown(event) {
+  const resizeHandle = event.target.closest('.resize-handle');
+  if (resizeHandle && activeTool === 'select') {
+    const itemEl = resizeHandle.closest('.board-item');
+    const item = getBoard().items.find((entry) => entry.id === itemEl.dataset.itemId);
+    if (!item) return;
+    selectedItemId = item.id;
+    refreshSelectionUI();
+    resizingItem = itemEl;
+    resizeStart = {
+      x: event.clientX,
+      y: event.clientY,
+      w: item.w,
+      h: item.h,
+    };
     return;
   }
+
+  const card = event.target.closest('.board-item');
+  if (!card || activeTool !== 'select') return;
+
+  selectedItemId = card.dataset.itemId;
+  refreshSelectionUI();
+  syncStyleInputs(getSelectedItem());
+
+  if (event.target.closest('.board-item-content')) return;
+
+  draggingItem = card;
+  const rect = card.getBoundingClientRect();
+  dragOffset = { x: event.clientX - rect.left, y: event.clientY - rect.top };
+  card.classList.add('dragging');
+}
+
+function pointerMove(event) {
+  const boardRect = boardCanvas.getBoundingClientRect();
+
+  if (draggingItem) {
+    const x = Math.max(0, event.clientX - boardRect.left - dragOffset.x);
+    const y = Math.max(0, event.clientY - boardRect.top - dragOffset.y);
+    draggingItem.style.left = `${x}px`;
+    draggingItem.style.top = `${y}px`;
+  }
+
+  if (resizingItem && resizeStart) {
+    const dx = event.clientX - resizeStart.x;
+    const dy = event.clientY - resizeStart.y;
+    const w = Math.max(90, resizeStart.w + dx);
+    const h = Math.max(40, resizeStart.h + dy);
+    resizingItem.style.width = `${w}px`;
+    resizingItem.style.height = `${h}px`;
+  }
+}
+
+function pointerUp() {
+  if (draggingItem) {
+    const item = getBoard().items.find((entry) => entry.id === draggingItem.dataset.itemId);
+    if (item) {
+      item.x = parseFloat(draggingItem.style.left);
+      item.y = parseFloat(draggingItem.style.top);
+      saveBoards();
+    }
+    draggingItem.classList.remove('dragging');
+    draggingItem = null;
+  }
+
+  if (resizingItem) {
+    const item = getBoard().items.find((entry) => entry.id === resizingItem.dataset.itemId);
+    if (item) {
+      item.w = parseFloat(resizingItem.style.width);
+      item.h = parseFloat(resizingItem.style.height);
+      saveBoards();
+    }
+    resizingItem = null;
+    resizeStart = null;
+  }
+}
+
+function handleTextInput(event) {
+  const editable = event.target.closest('[data-item-text]');
+  if (!editable) return;
+  const item = getBoard().items.find((entry) => entry.id === editable.dataset.itemText);
+  if (!item) return;
+  item.body = editable.textContent;
+  saveBoards();
+}
+
+function updateSelectedTextStyle(patch) {
+  const item = getSelectedItem();
+  if (!item || (item.type !== 'note' && item.type !== 'text')) return;
+  item.textStyle = { ...(item.textStyle || getDefaultTextStyle()), ...patch };
+  saveBoards();
+  renderBoard();
+  syncStyleInputs(item);
+}
+
+function resizeCanvas() {
+  if (!boardDrawing || !boardCanvas) return;
   const rect = boardCanvas.getBoundingClientRect();
   boardDrawing.width = rect.width;
   boardDrawing.height = rect.height;
@@ -237,30 +293,22 @@ function drawLine(start, end, color, size) {
 }
 
 function drawAll() {
-  if (!boardDrawing) {
-    return;
-  }
+  if (!boardDrawing) return;
   const ctx = boardDrawing.getContext('2d');
   ctx.clearRect(0, 0, boardDrawing.width, boardDrawing.height);
-  const { drawings } = getItems();
-  drawings.forEach((stroke) => {
-    stroke.points.forEach((point, index) => {
-      if (index === 0) {
-        return;
-      }
-      drawLine(stroke.points[index - 1], point, stroke.color, stroke.size);
+  getBoard().drawings.forEach((stroke) => {
+    stroke.points.forEach((point, idx) => {
+      if (idx === 0) return;
+      drawLine(stroke.points[idx - 1], point, stroke.color, stroke.size);
     });
   });
 }
 
 function startDrawing(event) {
-  if (activeTool !== 'draw') {
-    return;
-  }
+  if (activeTool !== 'draw') return;
   isDrawing = true;
   lastPoint = { x: event.offsetX, y: event.offsetY };
-  const boardData = getItems();
-  boardData.drawings.push({
+  getBoard().drawings.push({
     color: drawColorInput.value,
     size: parseInt(drawSizeInput.value, 10),
     points: [lastPoint],
@@ -268,15 +316,12 @@ function startDrawing(event) {
   saveBoards();
 }
 
-function drawMove(event) {
-  if (!isDrawing || activeTool !== 'draw') {
-    return;
-  }
+function drawingMove(event) {
+  if (!isDrawing || activeTool !== 'draw') return;
   const point = { x: event.offsetX, y: event.offsetY };
   drawLine(lastPoint, point, drawColorInput.value, parseInt(drawSizeInput.value, 10));
   lastPoint = point;
-  const boardData = getItems();
-  const stroke = boardData.drawings.at(-1);
+  const stroke = getBoard().drawings.at(-1);
   if (stroke) {
     stroke.points.push(point);
     saveBoards();
@@ -288,98 +333,80 @@ function stopDrawing() {
   lastPoint = null;
 }
 
-function addQuickItem(type) {
-  const boardData = getItems();
-  if (type === 'note') {
-    boardData.items.push({
-      id: createId('note'),
-      type: 'note',
-      title: 'Post-it',
-      body: '',
-      color: itemColor ? itemColor.value : '#fff6bf',
-      x: 120 + boardData.items.length * 16,
-      y: 120 + boardData.items.length * 16,
-    });
-  }
-  if (type === 'text') {
-    boardData.items.push({
-      id: createId('text'),
-      type: 'text',
-      title: 'Texto',
-      body: 'Escribe aquí...',
-      color: '#ffffff',
-      x: 120 + boardData.items.length * 16,
-      y: 120 + boardData.items.length * 16,
-    });
-  }
-  if (type === 'link') {
-    boardData.items.push({
-      id: createId('link'),
-      type: 'link',
-      title: 'Link',
-      url: 'https://',
-      x: 120 + boardData.items.length * 16,
-      y: 120 + boardData.items.length * 16,
-    });
-  }
-  saveBoards();
-  renderBoard();
-}
-
-if (boardCanvas) {
-  boardCanvas.addEventListener('pointerdown', onPointerDown);
-  window.addEventListener('pointermove', onPointerMove);
-  window.addEventListener('pointerup', onPointerUp);
-  boardCanvas.addEventListener('input', handleTextChange);
-}
-
-if (boardDrawing) {
-  boardDrawing.addEventListener('pointerdown', startDrawing);
-  boardDrawing.addEventListener('pointermove', drawMove);
-  boardDrawing.addEventListener('pointerup', stopDrawing);
-  boardDrawing.addEventListener('pointerleave', stopDrawing);
-  resizeCanvas();
-  window.addEventListener('resize', resizeCanvas);
-  setActiveTool('select');
-}
-
-toolButtons.forEach((button) => {
-  button.addEventListener('click', () => {
-    const tool = button.dataset.tool;
-    setActiveTool(tool);
-    if (tool === 'note' || tool === 'text' || tool === 'link') {
-      addQuickItem(tool);
+createButtons.forEach((btn) => {
+  btn.addEventListener('click', () => {
+    const type = btn.dataset.createItem;
+    if (type === 'note') {
+      createItem('note', {
+        title: noteTitleInput.value.trim() || 'Post-it',
+        body: noteTitleInput.value.trim() || 'Nuevo post-it',
+        color: noteBgInput.value || '#f0e766',
+      });
+      return;
+    }
+    if (type === 'text') {
+      createItem('text', {
+        body: textBodyInput.value.trim() || 'Texto plano',
+      });
+      return;
+    }
+    if (type === 'link') {
+      createItem('link', {
+        title: linkTitleInput.value.trim() || 'Abrir link',
+        url: linkUrlInput.value.trim() || 'https://',
+        w: 240,
+        h: 90,
+      });
     }
   });
+});
+
+toolButtons.forEach((btn) => {
+  btn.addEventListener('click', () => setActiveTool(btn.dataset.tool));
 });
 
 if (toolImageInput) {
   toolImageInput.addEventListener('change', (event) => {
     const file = event.target.files[0];
-    if (!file) {
-      return;
-    }
-    const boardData = getItems();
+    if (!file) return;
     const reader = new FileReader();
     reader.onload = () => {
-      boardData.items.push({
-        id: createId('image'),
-        type: 'image',
-        title: 'Imagen',
-        src: reader.result,
-        x: 120 + boardData.items.length * 16,
-        y: 120 + boardData.items.length * 16,
-      });
-      saveBoards();
-      renderBoard();
+      createItem('image', { src: reader.result, title: file.name, w: 260, h: 190 });
     };
     reader.readAsDataURL(file);
   });
 }
 
-if (form) {
-  form.addEventListener('submit', addItem);
+textFontInput?.addEventListener('change', () => updateSelectedTextStyle({ fontFamily: textFontInput.value }));
+textSizeInput?.addEventListener('input', () => updateSelectedTextStyle({ fontSize: parseInt(textSizeInput.value, 10) || 20 }));
+textColorInput?.addEventListener('input', () => updateSelectedTextStyle({ color: textColorInput.value }));
+
+styleToggles.forEach((btn) => {
+  btn.addEventListener('click', () => {
+    const key = btn.dataset.styleToggle;
+    const item = getSelectedItem();
+    if (!item || (item.type !== 'note' && item.type !== 'text')) return;
+    const current = item.textStyle || getDefaultTextStyle();
+    updateSelectedTextStyle({ [key]: !current[key] });
+  });
+});
+
+if (boardCanvas) {
+  boardCanvas.addEventListener('pointerdown', pointerDown);
+  boardCanvas.addEventListener('input', handleTextInput);
+  window.addEventListener('pointermove', pointerMove);
+  window.addEventListener('pointerup', pointerUp);
+}
+
+if (boardDrawing) {
+  boardDrawing.addEventListener('pointerdown', startDrawing);
+  boardDrawing.addEventListener('pointermove', drawingMove);
+  boardDrawing.addEventListener('pointerup', stopDrawing);
+  boardDrawing.addEventListener('pointerleave', stopDrawing);
+  window.addEventListener('resize', resizeCanvas);
+  resizeCanvas();
 }
 
 loadTaskName();
+setActiveTool('select');
 renderBoard();
