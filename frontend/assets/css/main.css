@@ -13,6 +13,15 @@ body {
   min-height: 100vh;
 }
 
+
+h1,
+h2,
+h3,
+.section-title,
+.nav-links a {
+  color: var(--color-text);
+}
+
 a {
   color: inherit;
   text-decoration: none;
@@ -42,8 +51,8 @@ textarea {
 }
 
 .topbar {
-  background: var(--color-surface);
-  border-bottom: 1px solid var(--color-border);
+  background: var(--color-primary);
+  border-bottom: 2px solid var(--color-primary-dark);
   box-shadow: var(--shadow-sm);
   position: sticky;
   top: 0;
@@ -61,15 +70,12 @@ textarea {
 .brand {
   display: flex;
   align-items: center;
-  font-weight: 700;
-  font-size: 1.2rem;
-  gap: 10px;
 }
 
-.brand span {
-  background: linear-gradient(120deg, var(--color-primary), var(--color-secondary));
-  -webkit-background-clip: text;
-  color: transparent;
+.brand-logo {
+  width: auto;
+  height: 44px;
+  object-fit: contain;
 }
 
 .nav-links {
@@ -79,23 +85,25 @@ textarea {
 }
 
 .nav-links a {
-  color: var(--color-muted);
-  font-weight: 500;
+  color: var(--color-text);
+  font-weight: 600;
   padding: 8px 12px;
   border-radius: var(--radius-xs);
+  background: rgba(255, 255, 255, 0.88);
   transition: all 0.2s ease;
 }
 
 .nav-links a.active,
 .nav-links a:hover {
-  color: var(--color-primary);
-  background: rgba(107, 78, 255, 0.1);
+  color: #000000;
+  background: var(--color-accent);
 }
 
 .nav-toggle {
   display: none;
   border: none;
   background: transparent;
+  color: #ffffff;
   font-size: 1.5rem;
   cursor: pointer;
 }
@@ -103,10 +111,11 @@ textarea {
 .main-content {
   flex: 1;
   padding: 32px 0 56px;
+  background: linear-gradient(180deg, rgba(240, 231, 102, 0.3), rgba(171, 205, 86, 0.18));
 }
 
 .hero {
-  background: linear-gradient(120deg, rgba(107, 78, 255, 0.1), rgba(26, 166, 183, 0.15));
+  background: linear-gradient(130deg, rgba(171, 205, 86, 0.38), rgba(240, 231, 102, 0.55));
   border-radius: var(--radius-md);
   padding: 40px;
   display: grid;
@@ -145,9 +154,9 @@ textarea {
 }
 
 .btn-secondary {
-  background: white;
-  border: 1px solid var(--color-border);
-  color: var(--color-text);
+  background: #ffffff;
+  border: 1px solid var(--color-primary);
+  color: var(--color-primary);
 }
 
 .btn-ghost {
@@ -174,7 +183,7 @@ textarea {
 }
 
 .card {
-  background: var(--color-surface);
+  background: var(--color-bg-soft);
   border-radius: var(--radius-md);
   padding: 24px;
   box-shadow: var(--shadow-sm);
@@ -202,7 +211,7 @@ textarea {
 }
 
 .column {
-  background: var(--color-surface);
+  background: var(--color-bg-soft);
   border-radius: var(--radius-md);
   padding: 16px;
   box-shadow: var(--shadow-sm);
@@ -223,7 +232,7 @@ textarea {
 }
 
 .task-card {
-  background: white;
+  background: #ffffff;
   border-radius: var(--radius-sm);
   padding: 14px;
   box-shadow: var(--shadow-sm);
@@ -260,18 +269,18 @@ textarea {
   border-radius: 999px;
   font-size: 0.75rem;
   font-weight: 600;
-  background: rgba(107, 78, 255, 0.1);
-  color: var(--color-primary-dark);
+  background: rgba(221, 138, 64, 0.18);
+  color: #8c4f16;
 }
 
 .badge[data-status='Por hacer'] {
-  background: rgba(26, 166, 183, 0.12);
-  color: var(--color-secondary);
+  background: rgba(171, 205, 86, 0.28);
+  color: var(--color-primary-dark);
 }
 
 .badge[data-status='En progreso'] {
-  background: rgba(255, 181, 71, 0.18);
-  color: #b76b00;
+  background: rgba(221, 138, 64, 0.25);
+  color: #8c4f16;
 }
 
 .badge[data-status='Completado'] {
@@ -352,7 +361,7 @@ textarea {
   height: 44px;
   border-radius: 14px;
   border: 1px solid var(--color-border);
-  background: #f4f5fb;
+  background: var(--color-bg-soft);
   display: grid;
   place-items: center;
   font-size: 1.2rem;
@@ -363,8 +372,8 @@ textarea {
 
 .toolbar-btn.active,
 .toolbar-btn:hover {
-  background: rgba(107, 78, 255, 0.14);
-  border-color: rgba(107, 78, 255, 0.4);
+  background: rgba(221, 138, 64, 0.22);
+  border-color: rgba(221, 138, 64, 0.55);
   transform: translateY(-1px);
   box-shadow: var(--shadow-sm);
 }
@@ -380,9 +389,9 @@ textarea {
 }
 
 .board-canvas {
-  background-color: #f8f8f8;
-  background-image: linear-gradient(#e6e6e6 1px, transparent 1px),
-    linear-gradient(90deg, #e6e6e6 1px, transparent 1px);
+  background-color: var(--color-bg-soft);
+  background-image: linear-gradient(#dce7ba 1px, transparent 1px),
+    linear-gradient(90deg, #dce7ba 1px, transparent 1px);
   background-size: 32px 32px;
   border-radius: var(--radius-md);
   min-height: 560px;
@@ -432,7 +441,7 @@ textarea {
   position: absolute;
   right: 20px;
   bottom: 20px;
-  background: white;
+  background: #ffffff;
   border-radius: 999px;
   padding: 8px 12px;
   display: flex;
@@ -463,15 +472,15 @@ textarea {
 }
 
 .board-item.note {
-  background: #fff6bf;
+  background: #f0e766;
 }
 
 .board-item.text {
-  background: #e0f7fa;
+  background: #abcd56;
 }
 
 .board-item.image {
-  background: #fce4ec;
+  background: #fffdf1;
   display: grid;
   gap: 8px;
   justify-items: center;
@@ -487,7 +496,7 @@ textarea {
 }
 
 .list-item {
-  background: white;
+  background: #ffffff;
   padding: 16px;
   border-radius: var(--radius-sm);
   box-shadow: var(--shadow-sm);
@@ -498,7 +507,7 @@ textarea {
 
 .footer {
   text-align: center;
-  color: var(--color-muted);
+  color: var(--color-primary-dark);
   padding: 24px 0 40px;
   font-size: 0.85rem;
 }
@@ -518,7 +527,7 @@ textarea {
     position: absolute;
     top: 64px;
     right: 4%;
-    background: white;
+    background: var(--color-primary);
     flex-direction: column;
     align-items: flex-start;
     padding: 12px;
@@ -534,4 +543,166 @@ textarea {
   .hero {
     padding: 24px;
   }
+}
+
+.page-board {
+  overflow: hidden;
+}
+
+.board-main {
+  flex: 1;
+  height: calc(100vh - 84px);
+}
+
+.board-workspace {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background-color: var(--color-bg-soft);
+  background-image: linear-gradient(#dce7ba 1px, transparent 1px),
+    linear-gradient(90deg, #dce7ba 1px, transparent 1px);
+  background-size: 32px 32px;
+  overflow: hidden;
+}
+
+.board-mini-menu {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: min(320px, 92vw);
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  padding: 16px;
+  display: grid;
+  gap: 12px;
+  z-index: 30;
+}
+
+.tool-panel {
+  display: none;
+  gap: 10px;
+}
+
+.tool-panel.active {
+  display: grid;
+}
+
+.tool-panel label {
+  display: grid;
+  gap: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.tool-panel input,
+.tool-panel select,
+.tool-panel textarea {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xs);
+  padding: 8px 10px;
+}
+
+.text-style-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.text-style-actions .btn {
+  padding: 8px 12px;
+  min-width: 44px;
+}
+
+.text-style-actions .btn.active {
+  background: var(--color-accent);
+  color: #000;
+}
+
+.board-item {
+  min-width: 140px;
+  min-height: 80px;
+  resize: none;
+  z-index: 2;
+  pointer-events: auto;
+}
+
+.board-item-content {
+  width: 100%;
+  height: 100%;
+  outline: none;
+}
+
+.board-item.note {
+  padding: 10px;
+}
+
+.board-item.text {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+  min-width: 120px;
+  min-height: 40px;
+}
+
+.board-item.text .board-item-content {
+  background: transparent;
+}
+
+.board-item.link {
+  background: #fff;
+}
+
+.board-item.image img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.board-item.selected {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.resize-handle {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  right: -6px;
+  bottom: -6px;
+  background: var(--color-accent);
+  border: 2px solid #fff;
+  border-radius: 2px;
+  cursor: nwse-resize;
+}
+
+@media (max-width: 900px) {
+  .board-main {
+    height: calc(100vh - 74px);
+  }
+
+  .board-mini-menu {
+    left: 12px;
+    right: 12px;
+    width: auto;
+    top: auto;
+    bottom: 12px;
+    max-height: 42vh;
+    overflow: auto;
+  }
+}
+
+.board-workspace .board-toolbar {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 30;
+}
+
+.board-workspace .board-drawing {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
 }
