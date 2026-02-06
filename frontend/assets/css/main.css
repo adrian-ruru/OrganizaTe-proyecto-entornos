@@ -577,7 +577,7 @@ textarea {
   padding: 16px;
   display: grid;
   gap: 12px;
-  z-index: 3;
+  z-index: 30;
 }
 
 .tool-panel {
@@ -623,6 +623,8 @@ textarea {
   min-width: 140px;
   min-height: 80px;
   resize: none;
+  z-index: 2;
+  pointer-events: auto;
 }
 
 .board-item-content {
@@ -695,9 +697,12 @@ textarea {
   position: absolute;
   top: 20px;
   left: 20px;
-  z-index: 3;
+  z-index: 30;
 }
 
 .board-workspace .board-drawing {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
   pointer-events: none;
 }
